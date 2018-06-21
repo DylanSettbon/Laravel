@@ -53,6 +53,9 @@
                                 <a href="{{ url('/messages') }}">Mes discutions</a>
                             </li>
                             <li>
+                                <a href="{{ url('/group') }}">Mes groupes</a>
+                            </li>
+                            <li>
                                 <a href="{{ url('/friends') }}">Mes amis</a>
                             </li>
                             <li>

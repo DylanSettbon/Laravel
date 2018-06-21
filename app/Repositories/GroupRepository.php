@@ -3,22 +3,41 @@
 namespace App\Repositories;
 
 use App\Group;
+use App\GroupUsers;
+use App\User;
+use DB;
 
 class GroupRepository
 {
 
     protected $group;
+    protected $groupusers;
 
-    public function __construct(Group $group)
+
+
+    public function __construct(Group $group, Groupusers $groupusers)
 	{
 		$this->group = $group;
+		$this->groupusers = $groupusers;
 	}
 
-	private function save(Group $group, Array $inputs)
+	private function save(Group $group, Groupusers $groupusers, Array $inputs)
 	{
-		$group->title = $inputs['title'];	
+		$group->title = $inputs['title'];
+		$idFriends = User::getFriends();
 
 		$group->save();
+
+		foreach($inputs['friends'] as $friend) {
+			foreach($idFriends as $idFriend) {
+				//dd('idFriends : ' .$idFriend. ' Friends : ' .$friend);
+				if($idFriend == $friend) {
+					$groupusers->idUser = $idFriend;
+					$groupusers->idGroup = $group->id;
+					DB::table('groupUsers')->insert(['idUser' => $idFriend, 'idGroup' => $group->id]);
+				}
+			}
+		}
 	}
 
 	public function getPaginate($n)
@@ -28,11 +47,21 @@ class GroupRepository
 
 	public function store(Array $inputs)
 	{
+		$idFriends = User::getFriends();
+
 		$group = new $this->group;
-		$group->title = $inputs['title'];		
+		$groupusers = new $this->groupusers;
 
-		$this->save($group, $inputs);
+		$group->title = $inputs['title'];	
 
+		foreach($inputs['friends'] as $friend) {
+			foreach($idFriends as $idFriend) {
+				if($idFriend == $friend)
+					$groupusers->idUser = $idFriend;
+			}
+		}
+
+		$this->save($group, $groupusers, $inputs);
 		return $group;
 	}
 

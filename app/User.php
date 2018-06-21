@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Cmgmyr\Messenger\Traits\Messagable;
+use Auth;
+use DB;
 
 class User extends Authenticatable
 {
@@ -28,5 +30,24 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public static function getFriends()
+    {
+        $idWaitRelation = [];
+        $relations = DB::table('relations')->where('status', 1)->where('idReceived', Auth::user()->id)->orWhere('idSender', Auth::user()->id)->get();
+        foreach ($relations as $relation) {
+            if ($relation->idSender != Auth::user()->id) {
+                $idWaitRelation[] = $relation->idSender;
+            }
+            if ($relation->idReceived != Auth::user()->id) {
+               $idWaitRelation[] = $relation->idReceived;
+            }
+        }
+            return $idWaitRelation;
+    }
+
+    public static function getFriend($idFriends) {
+
+    }
 }
 

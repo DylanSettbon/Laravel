@@ -85,6 +85,7 @@
                 <a href="{{ url('/') }}">{{Auth::user()->name}}</a>
                 <a href="{{ url('/messages') }}">Mes discutions</a>
                 <a href="{{ url('/friends') }}">Mes amis</a>
+                <a href="{{ url('/group') }}">Mes groupes</a>
                 <a href="{{ url('/logout') }}">Se deconnecter</a>
                 <br><br>
                 {!! Form::open(['url' => 'search']) !!}

@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\GroupCreateRequest;
 use App\Http\Requests\GroupUpdateRequest;
+use App\User;
 use App\Group;
+use Auth;
+use DB;
+
 
 
 use App\Repositories\GroupRepository;
@@ -33,7 +37,13 @@ class GroupController extends Controller
 
 	public function create()
 	{
-		return view('create');
+		$id = Auth::User()->id;
+		$idFriends = User::getFriends();
+		foreach($idFriends as $idFriend) {
+			$friends[] = DB::table('users')->where('id', '=', $idFriend)->first();
+		}
+//		dd($friends);
+		return view('create', compact('friends'));
 	}
 
 	public function store(GroupCreateRequest $request)
@@ -46,19 +56,27 @@ class GroupController extends Controller
 	public function show($id)
 	{
 		$group = $this->groupRepository->getById($id);
+		$groupUsers = DB::table('groupUsers')->where('idGroup', '=', $group->id)->get();
+		$idFriends = User::getFriends();
 
-		//recup la liste des amis
-		/*$amis = Relations::where('status', '=', 'accepted')
-		->where(function ($query) {
-			$query->where('idReceiver', '=', Auth::id())
-				->orWhere('idSender', '=', Auth::id())
-		);
-		->get();*/
+		foreach($groupUsers as $groupUser) {
+			foreach($idFriends as $idFriend) {
+				if($groupUser->idUser == $idFriend) {
+				$idFriendGroups[] = DB::table('groupUsers')->where('idUser', '=', $idFriend)->first();
+			}
+		}
+			
+		}
+		foreach($idFriends as $idFriend) {
+			foreach($idFriendGroups as $idFriendGroup) {
+			if($idFriend == $idFriendGroup->idUser) {
+				$friends[] = DB::table('users')->where('id', '=', $idFriend)->first();
+			}
+		}
 
+		}
 
-
-
-		return view('show',  compact('group', 'amis'));
+		return view('show',  compact('group', 'friends'));
 	}
 
 	public function edit($id)
@@ -78,7 +96,7 @@ class GroupController extends Controller
 			$groupUpdate->save();
 
 		
-		return redirect('group')->withOk("Le groupe" . $request->input('title') . " a été modifié.");
+		return redirect('group')->withOk("Le groupe " . $request->input('title') . " a été modifié.");
 	}
 
 	public function destroy($id)

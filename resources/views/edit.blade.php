@@ -1,7 +1,7 @@
 @extends('layouts.template')
 
 @section('contenu')
-    <div class="col-sm-offset-4 col-sm-4">
+    <div class="col-md-offset-1 col-md-10">
     	<br>
 		<div class="panel panel-primary">	
 			<div class="panel-heading">Modification d'un groupe</div>
@@ -19,7 +19,7 @@
 					{!! Form::close() !!}
 				</div>
 			</div>
-		</div>
+		
 		<a href="javascript:history.back()" class="btn btn-primary">
 			<span class="glyphicon glyphicon-circle-arrow-left"></span> Retour
 		</a>

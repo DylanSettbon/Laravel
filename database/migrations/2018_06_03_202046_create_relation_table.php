@@ -17,7 +17,7 @@ class CreateRelationTable extends Migration
             $table->increments('id');
             $table->integer('idSender')->unsigned();
             $table->integer('idReceived')->unsigned();
-            $table->integer('status');
+            $table->boolean('status')->default(0);
             $table->timestamps();
 
             //$table->foreign('idSender')->references('id')->on('users');
